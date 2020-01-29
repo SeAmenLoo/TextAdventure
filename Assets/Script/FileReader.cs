@@ -38,7 +38,7 @@ public class FileReader : MonoBehaviour
         StreamReader sr = null;
         try
         {
-            string file_url = path ;    //根据路径打开文件
+            string file_url = path ;    //根据路径打开csv文件
             sr = File.OpenText(file_url);
             Debug.Log("File Find in " + file_url);
         }
