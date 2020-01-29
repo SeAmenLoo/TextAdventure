@@ -107,8 +107,9 @@ public class FileReader : MonoBehaviour
                 SelectItem item = new SelectItem();
                 item.Button = itemButtons[j];
                 item.Text = itemTexts[j];
-                
-                item.Next = itemNexts[j];
+                string[] next =itemNexts[j].Split('*');
+                item.PreState = int.Parse(next[0]);
+                item.Next = int.Parse(next[1]);
                 items.Add(item);
             }
             selectData.items = items;
@@ -188,9 +189,10 @@ public class SelectItem
 {
     public string Button;
     public string Text;
+    public int PreState;//便于处理使用string，实际上是int型id
     //Next  对应选项的对应ID，使用|分隔，若为正则跳转至对应stage，负则显示对应select，进行进一步选择
     //      若存在state状态判断，则在对应next前添加stateid,使用*分隔
-    public string Next;
+    public int Next;
 }
 
 public class PhoneData
