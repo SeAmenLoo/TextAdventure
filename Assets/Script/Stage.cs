@@ -28,10 +28,11 @@ public class Stage : MonoBehaviour
 
     //输入号码
     public InputField inputField;
+    public string strPhoneNum;
     // Start is called before the first frame update
     void Start()
     {
-        
+        inputField.onValueChanged.AddListener(Changed_Value);
     }
 
     // Update is called once per frame
@@ -126,10 +127,17 @@ public class Stage : MonoBehaviour
 #endregion
 #region 输入
     public void ActInputF(bool act=true){
+        
         inputField.gameObject.SetActive(act);
         if(act){
+            inputField.text = "";
             inputField.ActivateInputField();
         }
+        
+    }
+    public void Changed_Value(string inp)
+    {
+        strPhoneNum = inp;
     }
 #endregion
 }

@@ -53,6 +53,26 @@ public class StoryData : MonoBehaviour
             return null;
         }
     }
+    public StageData GetStageDataByPhone(string num,int stage)
+    {
+        for(int i = 0; i < phoneData.Count; i++)
+        {
+            if (num == phoneData[i].Num)
+            {
+                for(int j = 0; j < phoneData[i].PreStage.Count; j++)
+                {
+                    if (stage == int.Parse(phoneData[i].PreStage[j]))
+                    {
+                        return stageData[phoneData[i].Stage];
+                    }
+                }
+            }
+        }
+
+        Debug.Log("not found");
+        return null;
+
+    }
     public StateData GetStateDataByID(int id)
     {
         if (stateData.ContainsKey(id))
@@ -65,6 +85,7 @@ public class StoryData : MonoBehaviour
             return null;
         }
     }
+
     public void SetStateData(int id,bool t)
     {
         if (stateData.ContainsKey(id))

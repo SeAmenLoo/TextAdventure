@@ -32,7 +32,8 @@ public class StageManager : MonoBehaviour
     }
     void UpdataStage(StageData stageData)
     {
-
+        stage.ActInputF(false);
+        stage.ActAside(false);
         if (!string.IsNullOrEmpty(stageData.Video))
         {
             stage.ActVideo(true);
@@ -48,18 +49,22 @@ public class StageManager : MonoBehaviour
         {
             SelectData selectData = storyData.GetSelectDataByID(stageData.Select);
             stage.SetSelect(selectData);
-            stage.ActAside(true);
-            StartCoroutine(WaitInput(selectData));
+            //stage.ActAside(true);
+            StartCoroutine(WaitSelect(selectData));
         }
-        else
+        else if(stageData.Select<0)
         {
 
             lastStage = curStage;
             curStage = -stageData.Select;
             UpdataStage(storyData.GetStageDataByID(curStage));
         } 
+        else if (stageData.Select == 0)
+        {
+            StartCoroutine(WaitPhone());
+        }
     }
-    IEnumerator WaitInput(SelectData selectData)
+    IEnumerator WaitSelect(SelectData selectData)
     {
         for(int i = 0; i > selectData.items.Count; i++)
         {
@@ -71,7 +76,7 @@ public class StageManager : MonoBehaviour
                 yield break;
             }
         }
-        Phone();
+
         yield return null;
     }
     KeyCode GetKeyCode(string s)
@@ -88,9 +93,30 @@ public class StageManager : MonoBehaviour
         return (KeyCode)s[0];
     }
 
-    public void Phone()//判断电话输入，注意跳转stage时关闭输入判断协程
+    IEnumerator  WaitPhone()//判断电话输入，注意跳转stage时关闭输入判断协程
     {
-
+        if (!stage.inputField.IsActive())
+        {
+            stage.ActInputF(true);
+        }
+        if (stage.strPhoneNum.Length == 5)
+        {
+            StageData stageData= storyData.GetStageDataByPhone(stage.strPhoneNum, curStage);
+            if (stageData == null)
+            {
+                stage.ActInputF(true);
+            }
+            else
+            {
+                lastStage = curStage;
+                curStage = stageData.ID;
+                UpdataStage(stageData);
+                yield break;
+            }
+            
+        }
+        
+        yield return null;
     }
 
 }
