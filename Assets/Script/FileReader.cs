@@ -78,7 +78,10 @@ public class FileReader : MonoBehaviour
             stageData.Text = str[5];
 
             stageData.Select = int.Parse(str[6]);
-            stageData.State = new List<string>(str[7].Split('|'));
+            stageData.PreState = new List<string>(str[7].Split('|'));
+            stageData.State = new List<string>(str[8].Split('|'));
+            stageData.defNext = int.Parse(str[9]);
+            
             stageDataList.Add(stageData.ID, stageData);
         } 
         return stageDataList;
@@ -176,7 +179,9 @@ public class StageData
     public string Text;
 
     public int Select;
+    public List<string> PreState;
     public List<string> State;
+    public int defNext;
 }
 
 public class SelectData

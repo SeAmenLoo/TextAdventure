@@ -32,8 +32,29 @@ public class StageManager : MonoBehaviour
     }
     void UpdataStage(StageData stageData)
     {
+        if (stageData.PreState != null && stageData.PreState.Count >= 0)
+        {
+            for (int i = 0; i < stageData.PreState.Count; i++)
+            {
+                if (!storyData.GetStateDataByID(int.Parse(stageData.PreState[i])).state)
+                {
+                    curStage = stageData.defNext;
+                    lastStage = curStage;
+                    UpdataStage(storyData.GetStageDataByID(curStage));
+                }
+            }
+        }
+        if (stageData.State != null && stageData.State.Count >= 0)
+        {
+            for (int i = 0; i < stageData.State.Count; i++)
+            {
+                storyData.SetStateData(int.Parse(stageData.State[i]), true);
+            }
+
+        }
         stage.ActInputF(false);
         stage.ActAside(false);
+
         if (!string.IsNullOrEmpty(stageData.Video))
         {
             stage.ActVideo(true);
@@ -45,6 +66,8 @@ public class StageManager : MonoBehaviour
     void UpdateSelect()
     {
         StageData stageData = storyData.GetStageDataByID(curStage);
+
+
         if (stageData.Select > 0)
         {
             SelectData selectData = storyData.GetSelectDataByID(stageData.Select);
@@ -93,7 +116,7 @@ public class StageManager : MonoBehaviour
         return (KeyCode)s[0];
     }
 
-    IEnumerator  WaitPhone()//判断电话输入，注意跳转stage时关闭输入判断协程
+    IEnumerator  WaitPhone()//判断电话输入，
     {
         if (!stage.inputField.IsActive())
         {
