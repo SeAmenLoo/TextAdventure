@@ -76,11 +76,11 @@ public class FileReader : MonoBehaviour
             stageData.Audio=str[3];
             stageData.Image = str[4];
             stageData.Text = str[5];
-
-            stageData.Select = int.Parse(str[6]);
+            
+            if(!string.IsNullOrEmpty( str[6]))stageData.Select = int.Parse(str[6]);
             stageData.PreState = new List<string>(str[7].Split('|'));
             stageData.State = new List<string>(str[8].Split('|'));
-            stageData.defNext = int.Parse(str[9]);
+            //stageData.defNext = int.Parse(str[9]);
             
             stageDataList.Add(stageData.ID, stageData);
         } 
@@ -111,8 +111,8 @@ public class FileReader : MonoBehaviour
                 item.Button = itemButtons[j];
                 item.Text = itemTexts[j];
                 string[] next =itemNexts[j].Split('*');
-                item.PreState = int.Parse(next[0]);
-                item.Next = int.Parse(next[1]);
+                //item.PreState = int.Parse(next[0]);
+                item.Next = int.Parse(next[0]);
                 items.Add(item);
             }
             selectData.items = items;
@@ -181,7 +181,7 @@ public class StageData
     public int Select;
     public List<string> PreState;
     public List<string> State;
-    public int defNext;
+    //public int defNext;
 }
 
 public class SelectData
@@ -213,5 +213,7 @@ public class StateData
     public string Detail;
     public bool state;
 }
+
+
 
 

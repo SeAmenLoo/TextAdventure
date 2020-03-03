@@ -9,7 +9,7 @@ public class StoryData : MonoBehaviour
     Dictionary<int, PhoneData> phoneData;
     Dictionary<int, StateData> stateData;
     // Start is called before the first frame update
-    void Start()
+    public void LoadData()
     {
         selectData = FileReader.Instance.GetSelectData();
         stageData = FileReader.Instance.GetStageData();
@@ -41,6 +41,21 @@ public class StoryData : MonoBehaviour
             return null;
         }
     }
+    public int GetDefNextByID(int id)
+    {
+        if (stageData.ContainsKey(id))
+        {
+            if (stageData[id].Select <= 0)
+            {
+                return -stageData[id].Select;
+            }
+            else
+            {
+                return GetSelectDataByID(stageData[id].Select).items[0].Next;
+            }
+        }
+        return -1;
+    }
     public PhoneData GetPhoneDataByID(int id)
     {
         if (phoneData.ContainsKey(id))
@@ -55,12 +70,13 @@ public class StoryData : MonoBehaviour
     }
     public StageData GetStageDataByPhone(string num,int stage)
     {
-        for(int i = 0; i < phoneData.Count; i++)
+        for(int i =1; i < phoneData.Count; i++)
         {
             if (num == phoneData[i].Num)
             {
                 for(int j = 0; j < phoneData[i].PreStage.Count; j++)
                 {
+                    if (string.IsNullOrEmpty(phoneData[i].PreStage[j])) continue;
                     if (stage == int.Parse(phoneData[i].PreStage[j]))
                     {
                         return stageData[phoneData[i].Stage];

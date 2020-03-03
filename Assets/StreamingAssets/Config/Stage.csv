@@ -1,5 +1,10 @@
-ID,StageName,Video,Audio,Image,Text,Select,State
-1,a,video/a.mp4,audio/a.mp3,image/a.jpg,,1,1
-2,b,video/b.mp4,audio/b.mp3,image/b.jpg,,2,2
-3,c,video/a.mp4,audio/a.mp3,,,-2,5
-4,d,,,image/a.jpg,,7,1
+ID,StageName,Video,Audio,Image,Text,Select,preState,setState
+1,开始,video/start.mp4,audio/a.mp3,image/a.jpg,,-4,,
+2,拨电话场景,video/call.mp4,audio/b.mp3,image/b.jpg,,0,,
+3,直跳场景,video/skip.mp4,audio/a.mp3,,,-6,,
+4,选项场景to3/2,video/sl.mp4,,image/a.jpg,,1,,
+5,打通场景，记录state1,video/prest.mp4,,,,-6,,1
+6,state1判断直跳7,video/st.mp4,,,,-7,1,2|3
+7,state1判断+选项场景to8/9,video/st_sl.mp4,,,,3,-2,
+8,默认选项，回滚至4,video/return.mp4,,,,-4,,
+9,结束,video/end.mp4,,,,,,

@@ -51,16 +51,21 @@ public class Stage : MonoBehaviour
 #endregion
 #region 视频
     public void SetVideo(string videoId){
+        
         video.source=VideoSource.Url;
         video.playOnAwake=false;
-        video.url=Application.streamingAssetsPath+videoId;
+        video.url=Application.streamingAssetsPath+'/'+videoId;
     }
     public void ActVideo(bool act){
         video.gameObject.SetActive(act);
+
     }
     public void PlayVideo(bool play=true){
         if(play){
+            video.Prepare();
+
             video.Play();
+            StartCoroutine(VideoCheck());
             
         }
         else
@@ -70,14 +75,31 @@ public class Stage : MonoBehaviour
     }
     IEnumerator VideoCheck()
     {
-        
-        if(video.frame== (long)video.frameCount)
+        while(!video.isPrepared)
         {
-            video.Pause();
-            onVideoEnd();
-            yield break;
+            yield return null;
         }
-        yield return null;
+        
+        while(true){
+            Debug.Log(video.isPlaying);
+            Debug.Log(video.frame);
+            Debug.Log(video.frameCount);
+            //if(video.frame>= (long)video.frameCount)
+            if(video.frame>= (long)video.frameCount-1)
+            {
+                video.Stop();
+                onVideoEnd();
+                yield break;
+            }
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                video.Stop();
+                onVideoEnd();
+                yield break;
+            }
+            yield return null;
+        }
+        
 
     }
 #endregion

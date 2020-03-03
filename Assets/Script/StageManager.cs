@@ -11,7 +11,8 @@ public class StageManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        storyData.LoadData();
+        StartGame(1);
     }
 
     // Update is called once per frame
@@ -27,8 +28,11 @@ public class StageManager : MonoBehaviour
     {
         curStage = startStage;
         StageData stageData= storyData.GetStageDataByID(curStage);
-        UpdataStage(stageData);
         stage.onVideoEnd += UpdateSelect;
+
+
+        UpdataStage(stageData);
+        
     }
     void UpdataStage(StageData stageData)
     {
@@ -36,19 +40,42 @@ public class StageManager : MonoBehaviour
         {
             for (int i = 0; i < stageData.PreState.Count; i++)
             {
-                if (!storyData.GetStateDataByID(int.Parse(stageData.PreState[i])).state)
-                {
-                    curStage = stageData.defNext;
-                    lastStage = curStage;
-                    UpdataStage(storyData.GetStageDataByID(curStage));
+                if (string.IsNullOrEmpty(stageData.PreState[i])) continue;
+                if(int.Parse(stageData.PreState[i]) < 0){
+                    if (storyData.GetStateDataByID(-int.Parse(stageData.PreState[i])).state){
+                        curStage = -storyData.GetDefNextByID(stageData.ID); //stageData.defNext;
+                        lastStage = curStage;
+                        UpdataStage(storyData.GetStageDataByID(curStage));
+                        return;
+                    }
                 }
+                else if(int.Parse(stageData.PreState[i]) > 0)
+                {
+                    if (!storyData.GetStateDataByID(int.Parse(stageData.PreState[i])).state)
+                    {
+                        curStage = storyData.GetDefNextByID(stageData.ID); //stageData.defNext;
+                        lastStage = curStage;
+                        UpdataStage(storyData.GetStageDataByID(curStage));
+                        return;
+                    }
+                }
+                
             }
         }
         if (stageData.State != null && stageData.State.Count >= 0)
         {
             for (int i = 0; i < stageData.State.Count; i++)
             {
-                storyData.SetStateData(int.Parse(stageData.State[i]), true);
+                if (string.IsNullOrEmpty(stageData.State[i])) continue;
+                if (int.Parse(stageData.State[i]) > 0)
+                {
+                    storyData.SetStateData(int.Parse(stageData.State[i]), true);
+                }
+                else if(int.Parse(stageData.State[i]) < 0)
+                {
+                    storyData.SetStateData(-int.Parse(stageData.State[i]), false);
+                }
+                
             }
 
         }
@@ -57,6 +84,7 @@ public class StageManager : MonoBehaviour
 
         if (!string.IsNullOrEmpty(stageData.Video))
         {
+            Debug.Log(stageData.ID.ToString() +'\n'+ stageData.StageName + '\n' + stageData.Video+"\n Start!");
             stage.ActVideo(true);
             stage.ActImage(false);
             stage.SetVideo(stageData.Video);
@@ -67,7 +95,7 @@ public class StageManager : MonoBehaviour
     {
         StageData stageData = storyData.GetStageDataByID(curStage);
 
-
+        Debug.Log(stageData.ID.ToString() +"\n Start!\n"+ stageData.Select);
         if (stageData.Select > 0)
         {
             SelectData selectData = storyData.GetSelectDataByID(stageData.Select);
@@ -89,18 +117,27 @@ public class StageManager : MonoBehaviour
     }
     IEnumerator WaitSelect(SelectData selectData)
     {
-        for(int i = 0; i > selectData.items.Count; i++)
-        {
-            if (Input.GetKey(GetKeyCode(selectData.items[i].Button)))
+        while(true){
+            if (Input.anyKeyDown)
             {
-                lastStage = curStage;
-                curStage = selectData.items[i].Next;
-                UpdataStage(storyData.GetStageDataByID(curStage));
-                yield break;
+                for (int i = 0; i < selectData.items.Count; i++)
+                {
+                   
+                    if (Input.GetKey(GetKeyCode(selectData.items[i].Button)))
+                    {
+          
+                        lastStage = curStage;
+                        curStage = -selectData.items[i].Next;
+                        UpdataStage(storyData.GetStageDataByID(curStage));
+                        yield break;
+                    }
+                }
             }
+            
+
+            yield return null;
         }
 
-        yield return null;
     }
     KeyCode GetKeyCode(string s)
     {
@@ -118,28 +155,31 @@ public class StageManager : MonoBehaviour
 
     IEnumerator  WaitPhone()//判断电话输入，
     {
-        if (!stage.inputField.IsActive())
-        {
-            stage.ActInputF(true);
-        }
-        if (stage.strPhoneNum.Length == 5)
-        {
-            StageData stageData= storyData.GetStageDataByPhone(stage.strPhoneNum, curStage);
-            if (stageData == null)
+        while(true){
+            if (!stage.inputField.IsActive())
             {
                 stage.ActInputF(true);
             }
-            else
+            if (stage.strPhoneNum.Length == 5)
             {
-                lastStage = curStage;
-                curStage = stageData.ID;
-                UpdataStage(stageData);
-                yield break;
+                StageData stageData= storyData.GetStageDataByPhone(stage.strPhoneNum, lastStage);
+                if (stageData == null)
+                {
+                    stage.ActInputF(true);
+                }
+                else
+                {
+                    lastStage = curStage;
+                    curStage = stageData.ID;
+                    UpdataStage(stageData);
+                    yield break;
+                }
+                
             }
             
+            yield return null;
         }
         
-        yield return null;
     }
 
 }
