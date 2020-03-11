@@ -18,18 +18,20 @@ public class StageManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        CheckPause();
     }
     private void OnDisable()
     {
-        stage.onVideoEnd -= UpdateSelect;
+        stage.onVideoEnd -= UpdateNext;
+        stage.onCanSelect -= CanSelect;
     }
+
     void StartGame(int startStage)
     {
         curStage = startStage;
         StageData stageData= storyData.GetStageDataByID(curStage);
-        stage.onVideoEnd += UpdateSelect;
-
+        stage.onVideoEnd += UpdateNext;
+        stage.onCanSelect += CanSelect;
 
         UpdataStage(stageData);
         
@@ -84,24 +86,45 @@ public class StageManager : MonoBehaviour
 
         if (!string.IsNullOrEmpty(stageData.Video))
         {
+           
             Debug.Log(stageData.ID.ToString() +'\n'+ stageData.StageName + '\n' + stageData.Video+"\n Start!");
-            stage.ActVideo(true);
-            stage.ActImage(false);
-            stage.SetVideo(stageData.Video);
-            stage.PlayVideo();
+            if (stageData.Video.Contains(".mp4"))
+            {
+                stage.ActVideo(true);
+                stage.ActImage(false);
+                stage.SetVideo(stageData.Video);
+                stage.PlayVideo();
+            }
+            else if (stageData.Video.Contains(".jpg"))
+            {
+                stage.ActVideo(false);
+                stage.ActImage(true);
+                stage.SetImage(stageData.Video);
+                
+            }
+            
+        }
+        if (!string.IsNullOrEmpty(stageData.Audio))
+        {
+            stage.SetSound(stageData.Audio);
+            stage.PlaySound();
         }
     }
-    void UpdateSelect()
+    void UpdateNext()
     {
         StageData stageData = storyData.GetStageDataByID(curStage);
 
         Debug.Log(stageData.ID.ToString() +"\n Start!\n"+ stageData.Select);
         if (stageData.Select > 0)
         {
-            SelectData selectData = storyData.GetSelectDataByID(stageData.Select);
-            stage.SetSelect(selectData);
+            //SelectData selectData = storyData.GetSelectDataByID(stageData.Select);
+            //stage.SetSelect(selectData);
             //stage.ActAside(true);
-            StartCoroutine(WaitSelect(selectData));
+            //StartCoroutine(WaitSelect(selectData));
+            curStage = storyData.GetDefNextByID(stageData.ID); //stageData.defNext;
+            lastStage = curStage;
+            StopCoroutine("WaitSelect");
+            UpdataStage(storyData.GetStageDataByID(curStage));
         }
         else if(stageData.Select<0)
         {
@@ -115,6 +138,20 @@ public class StageManager : MonoBehaviour
             StartCoroutine(WaitPhone());
         }
     }
+    void CanSelect()
+    {
+        
+        StageData stageData = storyData.GetStageDataByID(curStage);
+
+        Debug.Log("can select" + curStage);
+        if (stageData.Select > 0)
+        {
+            SelectData selectData = storyData.GetSelectDataByID(stageData.Select);
+            stage.SetSelect(selectData);
+            //stage.ActAside(true);
+            StartCoroutine(WaitSelect(selectData));
+        }
+    }
     IEnumerator WaitSelect(SelectData selectData)
     {
         while(true){
@@ -123,7 +160,7 @@ public class StageManager : MonoBehaviour
                 for (int i = 0; i < selectData.items.Count; i++)
                 {
                    
-                    if (Input.GetKey(GetKeyCode(selectData.items[i].Button)))
+                    if (Input.GetKey(GetKeyCode(selectData.items[i].Button)))//todo输入按键
                     {
           
                         lastStage = curStage;
@@ -143,6 +180,7 @@ public class StageManager : MonoBehaviour
     {
         if (s.Length > 1)
         {
+            
             //特殊按键
         }
         else
@@ -166,6 +204,8 @@ public class StageManager : MonoBehaviour
                 if (stageData == null)
                 {
                     stage.ActInputF(true);
+                    stage.ErrorPhone();
+                    Debug.Log("error phone");
                 }
                 else
                 {
@@ -180,6 +220,26 @@ public class StageManager : MonoBehaviour
             yield return null;
         }
         
+    }
+    public bool isPause=false;
+    void CheckPause()
+    {
+        if (Input.GetKey(KeyCode.P))//todo暂停按键
+        {
+            if (isPause)
+            {
+                stage.PauseVideo(false);
+                stage.SetPauseTip(false);
+                isPause = !isPause;
+            }
+            else
+            {
+                stage.PauseVideo(true);
+                stage.SetPauseTip(true);
+                isPause = !isPause;
+            }
+            
+        }
     }
 
 }

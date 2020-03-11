@@ -5,10 +5,11 @@ using UnityEngine.Video;
 using UnityEngine.UI;
 public class Stage : MonoBehaviour
 {
-
+    
     //Event
     public delegate void CallEvent();//声明委托类型
     public CallEvent onVideoEnd;
+    public CallEvent onCanSelect;
     //背景音乐 视频 图片
     public AudioSource sound;
     public VideoPlayer video;
@@ -29,6 +30,13 @@ public class Stage : MonoBehaviour
     //输入号码
     public InputField inputField;
     public string strPhoneNum;
+    public GameObject objErrorTip;
+    //选择进度条 
+    public int timeRange;
+    public Slider slider;
+    //默认选项帧数
+    public int defFrame=150;
+    public GameObject objPause;
     // Start is called before the first frame update
     void Start()
     {
@@ -60,17 +68,25 @@ public class Stage : MonoBehaviour
         video.gameObject.SetActive(act);
 
     }
-    public void PlayVideo(bool play=true){
-        if(play){
+    public void PlayVideo(){
+        
             video.Prepare();
 
             video.Play();
+            
             StartCoroutine(VideoCheck());
             
+        
+    }
+    public void PauseVideo(bool pause)
+    {
+        if (!pause)
+        {
+            video.Play();
         }
         else
         {
-            video.Stop();
+            video.Pause();
         }
     }
     IEnumerator VideoCheck()
@@ -79,12 +95,19 @@ public class Stage : MonoBehaviour
         {
             yield return null;
         }
-        
-        while(true){
-            Debug.Log(video.isPlaying);
-            Debug.Log(video.frame);
-            Debug.Log(video.frameCount);
+        int i = 0;
+        while (true){
+
+            i++;
+            slider.value = i / (float)video.frameCount;
+            //Debug.Log(video.isPlaying);
+            //Debug.Log(video.frame);
+            //Debug.Log(video.frameCount);
             //if(video.frame>= (long)video.frameCount)
+            if (video.frame>=defFrame)
+            {
+                onCanSelect();
+            }
             if(video.frame>= (long)video.frameCount-1)
             {
                 video.Stop();
@@ -99,8 +122,6 @@ public class Stage : MonoBehaviour
             }
             yield return null;
         }
-        
-
     }
 #endregion
 #region 旁白
@@ -112,8 +133,10 @@ public class Stage : MonoBehaviour
     }
 #endregion
 #region 配音 视频自带配音，此处仅为背景音乐
-    public void SetSound(AudioClip ac){
-        sound.clip=ac;
+    public void SetSound(string audioID){
+        AudioClip clip = Resources.Load<AudioClip>(Application.streamingAssetsPath + '/' + audioID);
+
+        sound.clip= clip;
         sound.playOnAwake=false;
     }
     public void PlaySound(bool play=true){
@@ -125,14 +148,44 @@ public class Stage : MonoBehaviour
             sound.Stop();
         }
     }
-#endregion
-#region 配图 若无视频显示配图
-    public void SetImage(Sprite s){
+
+    #endregion
+    #region 配图 若无视频显示配图
+
+    IEnumerator TimeCount()
+    {
+        slider.gameObject.SetActive(false);
+        int i = 0;
+        while (true)
+        {
+            
+            i++;
+            slider.value = i / timeRange;
+            //if(video.frame>= (long)video.frameCount)
+            if (i>= timeRange)
+            {
+                slider.gameObject.SetActive(true);
+                onVideoEnd();
+                yield break;
+            }
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                slider.gameObject.SetActive(true);
+                onVideoEnd();
+                
+                yield break;
+            }
+            yield return null;
+        }
+    }
+    public void SetImage(string imageID){
+        Sprite s = Resources.Load<Sprite>(Application.streamingAssetsPath + '/' + imageID);
         image.sprite=s;
     }
     public void ActImage(bool act){
         image.gameObject.SetActive(act);
     }
+    
     #endregion
 #region 选项 
     public void SetSelect(SelectData data)
@@ -161,5 +214,22 @@ public class Stage : MonoBehaviour
     {
         strPhoneNum = inp;
     }
-#endregion
+    public void ErrorPhone()
+    {
+        objErrorTip.SetActive(true);
+        StartCoroutine(ErrorTip());
+    }
+    IEnumerator ErrorTip()
+    {
+        yield return new WaitForSeconds(0.5f);
+        objErrorTip.SetActive(true);
+        yield break;
+    }
+    #endregion
+    #region 暂停
+    public void SetPauseTip(bool t = true)
+    {
+        objPause.SetActive(t);
+    }
+    #endregion
 }
