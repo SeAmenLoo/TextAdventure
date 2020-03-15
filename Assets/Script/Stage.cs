@@ -10,11 +10,12 @@ public class Stage : MonoBehaviour
     public delegate void CallEvent();//声明委托类型
     public CallEvent onVideoEnd;
     public CallEvent onCanSelect;
+    public CallEvent onMaskEnd;
     //背景音乐 视频 图片
     public AudioSource sound;
     public VideoPlayer video;
     public Image image;
-
+    
     //角色对话(目前不用)
     public GameObject Objtalk;
     public Text txtTalker;
@@ -37,6 +38,9 @@ public class Stage : MonoBehaviour
     //默认选项帧数
     public int defFrame=150;
     public GameObject objPause;
+
+    public int maskFrame = 50;
+    public Image mask;
     // Start is called before the first frame update
     void Start()
     {
@@ -62,21 +66,35 @@ public class Stage : MonoBehaviour
         
         video.source=VideoSource.Url;
         video.playOnAwake=false;
+    
         video.url=Application.streamingAssetsPath+'/'+videoId;
+        video.controlledAudioTrackCount = 1;
+        //video.audioOutputMode = VideoAudioOutputMode.Direct;
     }
     public void ActVideo(bool act){
         video.gameObject.SetActive(act);
 
     }
+    IEnumerator videoCheck;
     public void PlayVideo(){
-        
-            video.Prepare();
 
-            video.Play();
-            
-            StartCoroutine(VideoCheck());
+
+        
+        
+        videoCheck = VideoCheck();
+        StartCoroutine(videoCheck);
             
         
+    }
+    public void ClearVideo()
+    {
+        if (videoCheck != null)
+        {
+            StopCoroutine(videoCheck);
+            video.Stop();
+        }
+        
+       
     }
     public void PauseVideo(bool pause)
     {
@@ -89,26 +107,39 @@ public class Stage : MonoBehaviour
             video.Pause();
         }
     }
+    
     IEnumerator VideoCheck()
     {
-        while(!video.isPrepared)
+
+    
+        video.Prepare();
+        video.EnableAudioTrack(0, true);
+        while (!video.isPrepared)
         {
             yield return null;
         }
+        video.Play();
+       
         int i = 0;
+        bool canselect = false;
         while (true){
 
             i++;
             slider.value = i / (float)video.frameCount;
-            //Debug.Log(video.isPlaying);
+            // Debug.Log(video.isPlaying);
             //Debug.Log(video.frame);
             //Debug.Log(video.frameCount);
-            //if(video.frame>= (long)video.frameCount)
-            if (video.frame>=defFrame)
+            if (!video.isPlaying)
             {
+                Debug.Log(video.frame);
+                Debug.Log(video.frameCount);
+            }
+            if (video.frame>=defFrame&&!canselect)
+            {
+                canselect = true;
                 onCanSelect();
             }
-            if(video.frame>= (long)video.frameCount-1)
+            if(!video.isPlaying) //video.frame>= (long)video.frameCount
             {
                 video.Stop();
                 onVideoEnd();
@@ -222,7 +253,7 @@ public class Stage : MonoBehaviour
     IEnumerator ErrorTip()
     {
         yield return new WaitForSeconds(0.5f);
-        objErrorTip.SetActive(true);
+        objErrorTip.SetActive(false);
         yield break;
     }
     #endregion
@@ -230,6 +261,34 @@ public class Stage : MonoBehaviour
     public void SetPauseTip(bool t = true)
     {
         objPause.SetActive(t);
+        if (t)
+        {
+            mask.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+        }
+        else
+        {
+            mask.color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
+        }
+    }
+    public void SelectMask()
+    {
+        StartCoroutine(SelectEnd());
+    }
+    IEnumerator SelectEnd()
+    {
+        int i = 0;
+        while (true)
+        {
+            i++;
+            mask.color = new Color(1.0f, 1.0f, 1.0f, (float)i / maskFrame);
+            if (i > maskFrame) {
+                mask.color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
+                ClearVideo();
+                onMaskEnd();
+                yield break;
+            }
+            yield return null;
+        }
     }
     #endregion
 }

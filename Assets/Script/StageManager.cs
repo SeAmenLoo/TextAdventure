@@ -30,6 +30,7 @@ public class StageManager : MonoBehaviour
     {
         curStage = startStage;
         StageData stageData= storyData.GetStageDataByID(curStage);
+
         stage.onVideoEnd += UpdateNext;
         stage.onCanSelect += CanSelect;
 
@@ -45,7 +46,7 @@ public class StageManager : MonoBehaviour
                 if (string.IsNullOrEmpty(stageData.PreState[i])) continue;
                 if(int.Parse(stageData.PreState[i]) < 0){
                     if (storyData.GetStateDataByID(-int.Parse(stageData.PreState[i])).state){
-                        curStage = -storyData.GetDefNextByID(stageData.ID); //stageData.defNext;
+                        curStage = storyData.GetDefNextByID(stageData.ID); //stageData.defNext;
                         lastStage = curStage;
                         UpdataStage(storyData.GetStageDataByID(curStage));
                         return;
@@ -83,15 +84,16 @@ public class StageManager : MonoBehaviour
         }
         stage.ActInputF(false);
         stage.ActAside(false);
-
+        //stage.ClearVideo();
         if (!string.IsNullOrEmpty(stageData.Video))
         {
            
-            Debug.Log(stageData.ID.ToString() +'\n'+ stageData.StageName + '\n' + stageData.Video+"\n Start!");
+            Debug.Log(stageData.ID.ToString() +" Start");
             if (stageData.Video.Contains(".mp4"))
             {
                 stage.ActVideo(true);
                 stage.ActImage(false);
+                
                 stage.SetVideo(stageData.Video);
                 stage.PlayVideo();
             }
@@ -110,11 +112,13 @@ public class StageManager : MonoBehaviour
             stage.PlaySound();
         }
     }
+    IEnumerator waitSelect;
     void UpdateNext()
     {
         StageData stageData = storyData.GetStageDataByID(curStage);
 
-        Debug.Log(stageData.ID.ToString() +"\n Start!\n"+ stageData.Select);
+        Debug.Log(stageData.ID.ToString() +" end");
+        Debug.Log("last:"+lastStage);
         if (stageData.Select > 0)
         {
             //SelectData selectData = storyData.GetSelectDataByID(stageData.Select);
@@ -123,7 +127,9 @@ public class StageManager : MonoBehaviour
             //StartCoroutine(WaitSelect(selectData));
             curStage = storyData.GetDefNextByID(stageData.ID); //stageData.defNext;
             lastStage = curStage;
-            StopCoroutine("WaitSelect");
+            if (waitSelect != null) 
+                StopCoroutine(waitSelect);
+            
             UpdataStage(storyData.GetStageDataByID(curStage));
         }
         else if(stageData.Select<0)
@@ -143,18 +149,21 @@ public class StageManager : MonoBehaviour
         
         StageData stageData = storyData.GetStageDataByID(curStage);
 
-        Debug.Log("can select" + curStage);
+        
         if (stageData.Select > 0)
         {
+            Debug.Log("can select" + curStage);
             SelectData selectData = storyData.GetSelectDataByID(stageData.Select);
             stage.SetSelect(selectData);
             //stage.ActAside(true);
-            StartCoroutine(WaitSelect(selectData));
+            waitSelect = WaitSelect(selectData);
+            StartCoroutine(waitSelect);
         }
     }
     IEnumerator WaitSelect(SelectData selectData)
     {
         while(true){
+            Debug.Log("waiting");
             if (Input.anyKeyDown)
             {
                 for (int i = 0; i < selectData.items.Count; i++)
@@ -165,7 +174,8 @@ public class StageManager : MonoBehaviour
           
                         lastStage = curStage;
                         curStage = -selectData.items[i].Next;
-                        UpdataStage(storyData.GetStageDataByID(curStage));
+                        stage.onMaskEnd = Select;
+                        stage.SelectMask();
                         yield break;
                     }
                 }
@@ -175,6 +185,11 @@ public class StageManager : MonoBehaviour
             yield return null;
         }
 
+    }
+
+    void Select()
+    {
+        UpdataStage(storyData.GetStageDataByID(curStage));
     }
     KeyCode GetKeyCode(string s)
     {

@@ -51,7 +51,7 @@ public class StoryData : MonoBehaviour
             }
             else
             {
-                return GetSelectDataByID(stageData[id].Select).items[0].Next;
+                return -GetSelectDataByID(stageData[id].Select).items[0].Next;
             }
         }
         return -1;
@@ -85,7 +85,7 @@ public class StoryData : MonoBehaviour
             }
         }
 
-        Debug.Log("not found");
+        Debug.Log("not found"+num+" on "+stage);
         return null;
 
     }
