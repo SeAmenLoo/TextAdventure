@@ -39,7 +39,7 @@ public class Stage : MonoBehaviour
     public int defFrame=150;
     public GameObject objPause;
 
-    public int maskFrame = 50;
+    public int maskFrame ;
     public Image mask;
     // Start is called before the first frame update
     void Start()
@@ -79,8 +79,8 @@ public class Stage : MonoBehaviour
     public void PlayVideo(){
 
 
-        
-        
+
+        ClearVideo();
         videoCheck = VideoCheck();
         StartCoroutine(videoCheck);
             
@@ -121,6 +121,8 @@ public class Stage : MonoBehaviour
         video.Play();
        
         int i = 0;
+        int frame = (int)video.frameCount - defFrame;
+        Debug.Log(video.url);
         bool canselect = false;
         while (true){
 
@@ -134,7 +136,7 @@ public class Stage : MonoBehaviour
                 Debug.Log(video.frame);
                 Debug.Log(video.frameCount);
             }
-            if (video.frame>=defFrame&&!canselect)
+            if (video.frame>= frame && !canselect)
             {
                 canselect = true;
                 onCanSelect();
@@ -238,6 +240,7 @@ public class Stage : MonoBehaviour
         if(act){
             inputField.text = "";
             inputField.ActivateInputField();
+         
         }
         
     }
@@ -277,14 +280,27 @@ public class Stage : MonoBehaviour
     IEnumerator SelectEnd()
     {
         int i = 0;
+        bool flag=false;
         while (true)
         {
-            i++;
-            mask.color = new Color(1.0f, 1.0f, 1.0f, (float)i / maskFrame);
+            if (!flag)
+            {
+                i++;
+            }
+            else
+            {
+                i--;
+            }
+            mask.color = new Color(0.0f, 0.0f, 0.0f, (float)i*2 / maskFrame);
             if (i > maskFrame) {
-                mask.color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
+                //mask.color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
+                flag = true;
                 ClearVideo();
                 onMaskEnd();
+               
+            }
+            else if (i < 0 && flag)
+            {
                 yield break;
             }
             yield return null;

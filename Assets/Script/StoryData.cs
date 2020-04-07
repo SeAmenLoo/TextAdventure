@@ -70,7 +70,7 @@ public class StoryData : MonoBehaviour
     }
     public StageData GetStageDataByPhone(string num,int stage)
     {
-        for(int i =1; i < phoneData.Count; i++)
+        for(int i =1; i <= phoneData.Count; i++)
         {
             if (num == phoneData[i].Num)
             {

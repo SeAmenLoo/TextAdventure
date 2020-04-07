@@ -108,9 +108,18 @@ public class StageManager : MonoBehaviour
         }
         if (!string.IsNullOrEmpty(stageData.Audio))
         {
-            stage.SetSound(stageData.Audio);
-            stage.PlaySound();
+            if (stageData.Audio == "clear")
+            {
+                stage.PlaySound(false);
+            }
+            else
+            {
+                stage.SetSound(stageData.Audio);
+                stage.PlaySound();
+            }
+
         }
+        
     }
     IEnumerator waitSelect;
     void UpdateNext()
@@ -125,11 +134,12 @@ public class StageManager : MonoBehaviour
             //stage.SetSelect(selectData);
             //stage.ActAside(true);
             //StartCoroutine(WaitSelect(selectData));
-            curStage = storyData.GetDefNextByID(stageData.ID); //stageData.defNext;
             lastStage = curStage;
+            curStage = storyData.GetDefNextByID(stageData.ID); //stageData.defNext;
+            
             if (waitSelect != null) 
                 StopCoroutine(waitSelect);
-            
+            waitSelect = null;
             UpdataStage(storyData.GetStageDataByID(curStage));
         }
         else if(stageData.Select<0)
@@ -141,7 +151,7 @@ public class StageManager : MonoBehaviour
         } 
         else if (stageData.Select == 0)
         {
-            StartCoroutine(WaitPhone());
+            //StartCoroutine(WaitPhone());
         }
     }
     void CanSelect()
@@ -156,14 +166,27 @@ public class StageManager : MonoBehaviour
             SelectData selectData = storyData.GetSelectDataByID(stageData.Select);
             stage.SetSelect(selectData);
             //stage.ActAside(true);
+            if (waitSelect != null)
+            {
+                StopCoroutine(waitSelect);
+                waitSelect = null;
+        
+
+            }
             waitSelect = WaitSelect(selectData);
             StartCoroutine(waitSelect);
+        
+        }
+        if (stageData.Select == 0)
+        {
+            StartCoroutine(WaitPhone());
         }
     }
     IEnumerator WaitSelect(SelectData selectData)
     {
-        while(true){
-            Debug.Log("waiting");
+        Debug.Log("Waiting");
+        while (true){
+            
             if (Input.anyKeyDown)
             {
                 for (int i = 0; i < selectData.items.Count; i++)
@@ -176,6 +199,7 @@ public class StageManager : MonoBehaviour
                         curStage = -selectData.items[i].Next;
                         stage.onMaskEnd = Select;
                         stage.SelectMask();
+                        Debug.Log("endWait");
                         yield break;
                     }
                 }
@@ -215,6 +239,7 @@ public class StageManager : MonoBehaviour
             }
             if (stage.strPhoneNum.Length == 5)
             {
+                yield return new WaitForSeconds(0.5f);
                 StageData stageData= storyData.GetStageDataByPhone(stage.strPhoneNum, lastStage);
                 if (stageData == null)
                 {
@@ -226,7 +251,9 @@ public class StageManager : MonoBehaviour
                 {
                     lastStage = curStage;
                     curStage = stageData.ID;
-                    UpdataStage(stageData);
+
+                    stage.onMaskEnd = Select;
+                    stage.SelectMask();
                     yield break;
                 }
                 
