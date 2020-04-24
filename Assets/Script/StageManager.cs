@@ -19,6 +19,7 @@ public class StageManager : MonoBehaviour
     void Update()
     {
         CheckPause();
+        CheckMapVisable();
     }
     private void OnDisable()
     {
@@ -82,8 +83,10 @@ public class StageManager : MonoBehaviour
             }
 
         }
+        canPause = true;
         stage.ActInputF(false);
         stage.ActAside(false);
+        stageMap.SetMapStage(stageData.ID);
         //stage.ClearVideo();
         if (!string.IsNullOrEmpty(stageData.Video))
         {
@@ -162,6 +165,7 @@ public class StageManager : MonoBehaviour
         
         if (stageData.Select > 0)
         {
+            canPause = false;
             Debug.Log("can select" + curStage);
             SelectData selectData = storyData.GetSelectDataByID(stageData.Select);
             stage.SetSelect(selectData);
@@ -179,6 +183,7 @@ public class StageManager : MonoBehaviour
         }
         if (stageData.Select == 0)
         {
+            canPause = false;
             StartCoroutine(WaitPhone());
         }
     }
@@ -224,7 +229,17 @@ public class StageManager : MonoBehaviour
         }
         else
         {
-            
+     
+            if (s[0] == '0') return KeyCode.Keypad0;
+            else if(s[0] == '1') return KeyCode.Keypad1;
+            else if (s[0] == '2') return KeyCode.Keypad2;
+            else if (s[0] == '3') return KeyCode.Keypad3;
+            else if (s[0] == '4') return KeyCode.Keypad4;
+            else if (s[0] == '5') return KeyCode.Keypad5;
+            else if (s[0] == '6') return KeyCode.Keypad6;
+            else if (s[0] == '7') return KeyCode.Keypad7;
+            else if (s[0] == '8') return KeyCode.Keypad8;
+            else if (s[0] == '9') return KeyCode.Keypad9;
             //输入字符
         }
         return (KeyCode)s[0];
@@ -237,6 +252,7 @@ public class StageManager : MonoBehaviour
             {
                 stage.ActInputF(true);
             }
+            
             if (stage.strPhoneNum.Length == 5)
             {
                 yield return new WaitForSeconds(0.5f);
@@ -263,25 +279,60 @@ public class StageManager : MonoBehaviour
         }
         
     }
-    public bool isPause=false;
+
+    //暂停
+    bool isPause=false;
+    bool canPause=true;
     void CheckPause()
     {
-        if (Input.GetKey(KeyCode.P))//todo暂停按键
+        
+        if (Input.GetKeyDown(KeyCode.P)&&canPause)//todo暂停按键
         {
+            Debug.Log("pause");
             if (isPause)
             {
-                stage.PauseVideo(false);
-                stage.SetPauseTip(false);
-                isPause = !isPause;
+                SetPause(false);
+
+
             }
             else
             {
-                stage.PauseVideo(true);
-                stage.SetPauseTip(true);
-                isPause = !isPause;
+                SetPause(true);
+
+
             }
-            
         }
     }
+    void SetPause(bool p)
+    {
+        stage.PauseVideo(p);
+        stage.SetPauseTip(p);
+        isPause = !isPause;
+    }
 
+
+    public Map stageMap;
+    bool isMapShow = false;
+    bool canShowMap=true;
+    void CheckMapVisable()
+    {
+        if (Input.GetKeyDown(KeyCode.O) && canShowMap)//todo菜单按键
+        {
+            Debug.Log("showMap");
+            if (isMapShow)
+            {
+                SetPause(false);
+                stageMap.SetMapShow(false);
+            }
+            else
+            {
+                SetPause(true);
+                stageMap.SetMapShow(true); 
+            }
+            isMapShow = !isMapShow;
+
+        }
+    }
+    
+    
 }

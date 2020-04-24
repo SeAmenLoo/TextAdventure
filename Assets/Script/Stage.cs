@@ -96,8 +96,10 @@ public class Stage : MonoBehaviour
         
        
     }
+    public bool isPause;
     public void PauseVideo(bool pause)
     {
+        isPause = pause;
         if (!pause)
         {
             video.Play();
@@ -119,7 +121,7 @@ public class Stage : MonoBehaviour
             yield return null;
         }
         video.Play();
-       
+        isPause = false;
         int i = 0;
         int frame = (int)video.frameCount - defFrame;
         Debug.Log(video.url);
@@ -131,17 +133,17 @@ public class Stage : MonoBehaviour
             // Debug.Log(video.isPlaying);
             //Debug.Log(video.frame);
             //Debug.Log(video.frameCount);
-            if (!video.isPlaying)
-            {
-                Debug.Log(video.frame);
-                Debug.Log(video.frameCount);
-            }
+            //if (!video.isPlaying)
+            //{
+            //    Debug.Log(video.frame);
+            //    Debug.Log(video.frameCount);
+            //}
             if (video.frame>= frame && !canselect)
             {
                 canselect = true;
                 onCanSelect();
             }
-            if(!video.isPlaying) //video.frame>= (long)video.frameCount
+            if(!video.isPlaying&&!isPause) //video.frame>= (long)video.frameCount
             {
                 video.Stop();
                 onVideoEnd();
@@ -246,6 +248,12 @@ public class Stage : MonoBehaviour
     }
     public void Changed_Value(string inp)
     {
+        if (inp.EndsWith("#")) //todo输入井号判断
+        {
+            inp = inp.Substring(0, inp.Length - 2);
+            inputField.text = inp;
+            inputField.ActivateInputField();
+        }
         strPhoneNum = inp;
     }
     public void ErrorPhone()
