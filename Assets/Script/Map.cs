@@ -10,7 +10,7 @@ public class Map : MonoBehaviour
     public float width;
     RectTransform MapRect;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         MapRect = GetComponent<RectTransform>();
         dicNode = new Dictionary<int, MapNode>();
@@ -18,6 +18,7 @@ public class Map : MonoBehaviour
         {
             dicNode.Add(nodes[i].stateID, nodes[i]);
         }
+        RefreshMap();
     }
 
     // Update is called once per frame
@@ -33,20 +34,22 @@ public class Map : MonoBehaviour
             UpdateMapPosition(dicNode[id].rect);
 
         }
+
         
     }
     public void UpdateMapPosition(RectTransform rect)
     {
         float posx;
-        if((MapRect.rect.width-Screen.width) / 2< Mathf.Abs(rect.position.x))
+        Debug.Log(MapRect.rect.width + "-" + Screen.width + "/2<" + rect.localPosition.x);
+        if((MapRect.rect.width-Screen.width) / 2< Mathf.Abs(rect.localPosition.x))
         {
-            posx=Mathf.Sign(rect.position.x) * (MapRect.rect.width - Screen.width) / 2;
+            posx=Mathf.Sign(rect.localPosition.x) * (MapRect.rect.width - Screen.width) / 2;
         }
         else
         {
-            posx = rect.position.x;
+            posx = rect.localPosition.x;
         }
-        MapRect.position-=new Vector3(posx, 0,0);
+        MapRect.localPosition = new Vector3(-posx, 0,0);
         
     }
     public void RefreshMap()
@@ -55,12 +58,21 @@ public class Map : MonoBehaviour
         {
             nodes[i].SetNode(false);
         }
-
+        float posx =  (MapRect.rect.width - Screen.width) / 2;
+        MapRect.localPosition = new Vector3(posx, 0, 0);
     }
 
     public void SetMapShow(bool act)
     {
-        objMap.SetActive(act);
+        if (act)
+        {
+            objMap.transform.localScale = new Vector3(1, 1, 1);
+        }
+        else
+        {
+            objMap.transform.localScale = new Vector3(0,0,0);
+        }
+       
     }
 
 }

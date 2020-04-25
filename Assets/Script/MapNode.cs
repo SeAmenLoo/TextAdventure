@@ -19,9 +19,10 @@ public class MapNode : MonoBehaviour
     }
     public RectTransform rect;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         rect = GetComponent<RectTransform>();
+        Debug.Log(stateID);
     }
 
     // Update is called once per frame
