@@ -5,6 +5,8 @@ using UnityEngine;
 public class Map : MonoBehaviour
 {
     public GameObject objMap;
+    public GameObject objTip;
+
     public MapNode[] nodes;
     public Dictionary<int,MapNode> dicNode;
     public float width;
@@ -12,7 +14,7 @@ public class Map : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        MapRect = GetComponent<RectTransform>();
+        MapRect = objMap.GetComponent<RectTransform>();
         dicNode = new Dictionary<int, MapNode>();
         for (int i = 0; i< nodes.Length; i++)
         {
@@ -67,10 +69,12 @@ public class Map : MonoBehaviour
         if (act)
         {
             objMap.transform.localScale = new Vector3(1, 1, 1);
+            objTip.transform.localScale = new Vector3(1, 1, 1);
         }
         else
         {
             objMap.transform.localScale = new Vector3(0,0,0);
+            objTip.transform.localScale = new Vector3(0, 0, 0);
         }
        
     }

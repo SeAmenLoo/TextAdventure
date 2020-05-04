@@ -316,7 +316,7 @@ public class StageManager : MonoBehaviour
     bool canShowMap=true;
     void CheckMapVisable()
     {
-        if (Input.GetKeyDown(KeyCode.O) && canShowMap)//todo菜单按键
+        if (Input.GetKeyDown(KeyCode.KeypadMultiply) && canShowMap)//todo菜单按键
         {
             Debug.Log("showMap");
             if (isMapShow)
