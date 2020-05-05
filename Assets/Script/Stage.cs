@@ -261,11 +261,39 @@ public class Stage : MonoBehaviour
         objErrorTip.SetActive(true);
         StartCoroutine(ErrorTip());
     }
+    public Text texError;
     IEnumerator ErrorTip()
     {
-        yield return new WaitForSeconds(0.5f);
-        objErrorTip.SetActive(false);
-        yield break;
+        float i = 0;
+        texError.color=new Color(1f,1f,1f,i);
+        
+        while (true)
+        {
+            i += 0.1f;
+            texError.color = new Color(1f, 1f, 1f, i);
+            
+            if (i >= 1)
+            {
+                break;
+            }
+            yield return null;
+        }
+        yield return new WaitForSeconds(1f);
+        while (true)
+        {
+            i -= 0.1f;
+            texError.color = new Color(1f, 1f, 1f, i);
+
+            if (i <=0)
+            {
+                
+                objErrorTip.SetActive(false);
+                yield break;
+            }
+            yield return null;
+        }
+       
+
     }
     #endregion
     #region 暂停
@@ -303,7 +331,11 @@ public class Stage : MonoBehaviour
             if (i > maskFrame) {
                 //mask.color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
                 flag = true;
-                ClearVideo();
+                if (!video.isPaused)
+                {
+                    ClearVideo();
+                }
+                
                 onMaskEnd();
                
             }

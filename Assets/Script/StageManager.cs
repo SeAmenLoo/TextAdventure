@@ -84,6 +84,7 @@ public class StageManager : MonoBehaviour
 
         }
         canPause = true;
+        canShowMap = true;
         stage.ActInputF(false);
         stage.ActAside(false);
         stageMap.SetMapStage(stageData.ID);
@@ -184,6 +185,7 @@ public class StageManager : MonoBehaviour
         if (stageData.Select == 0)
         {
             canPause = false;
+            canShowMap = false;
             StartCoroutine(WaitPhone());
         }
     }
@@ -230,16 +232,16 @@ public class StageManager : MonoBehaviour
         else
         {
      
-            if (s[0] == '0') return KeyCode.Keypad0;
-            else if(s[0] == '1') return KeyCode.Keypad1;
-            else if (s[0] == '2') return KeyCode.Keypad2;
-            else if (s[0] == '3') return KeyCode.Keypad3;
-            else if (s[0] == '4') return KeyCode.Keypad4;
-            else if (s[0] == '5') return KeyCode.Keypad5;
-            else if (s[0] == '6') return KeyCode.Keypad6;
-            else if (s[0] == '7') return KeyCode.Keypad7;
-            else if (s[0] == '8') return KeyCode.Keypad8;
-            else if (s[0] == '9') return KeyCode.Keypad9;
+            //if (s[0] == '0') return KeyCode.Keypad0;
+            //else if(s[0] == '1') return KeyCode.Keypad1;
+            //else if (s[0] == '2') return KeyCode.Keypad2;
+            //else if (s[0] == '3') return KeyCode.Keypad3;
+            //else if (s[0] == '4') return KeyCode.Keypad4;
+            //else if (s[0] == '5') return KeyCode.Keypad5;
+            //else if (s[0] == '6') return KeyCode.Keypad6;
+            //else if (s[0] == '7') return KeyCode.Keypad7;
+            //else if (s[0] == '8') return KeyCode.Keypad8;
+            //else if (s[0] == '9') return KeyCode.Keypad9;
             //输入字符
         }
         return (KeyCode)s[0];
@@ -316,23 +318,31 @@ public class StageManager : MonoBehaviour
     bool canShowMap=true;
     void CheckMapVisable()
     {
-        if (Input.GetKeyDown(KeyCode.KeypadMultiply) && canShowMap)//todo菜单按键
+        //KeyCode.Slash
+        if (Input.GetKeyDown(KeyCode.Alpha8) && canShowMap)//todo菜单按键
         {
             Debug.Log("showMap");
-            if (isMapShow)
-            {
-                SetPause(false);
-                stageMap.SetMapShow(false);
-            }
-            else
-            {
-                SetPause(true);
-                stageMap.SetMapShow(true); 
-            }
-            isMapShow = !isMapShow;
+            canShowMap = false;
+            stage.PauseVideo(!isMapShow);
+            stage.onMaskEnd = SetMapMask;
+            stage.SelectMask();
 
         }
     }
-    
+    void SetMapMask()
+    {
+        if (isMapShow)
+        {
+            
+            stageMap.SetMapShow(false);
+        }
+        else
+        {
+            
+            stageMap.SetMapShow(true);
+        }
+        isMapShow = !isMapShow;
+        canShowMap = true;
+    }
     
 }
