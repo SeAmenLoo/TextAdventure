@@ -27,12 +27,12 @@ public class DataHelper : Editor
         {
             DirectoryInfo direction = new DirectoryInfo(path);
             FileInfo[] files = direction.GetFiles();
-            Debug.Log(files.Length);
+            //Debug.Log(files.Length);
             for (int i = 0; i < files.Length; i++)
             {
                 if (files[i].Name.EndsWith(".csv"))
                 {
-                    Debug.Log(files[i].Name);
+                    //Debug.Log(files[i].Name);
                 }             
             }
         }

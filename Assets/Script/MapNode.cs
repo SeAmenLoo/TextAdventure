@@ -22,7 +22,7 @@ public class MapNode : MonoBehaviour
     void Awake()
     {
         rect = GetComponent<RectTransform>();
-        Debug.Log(stateID);
+        //Debug.Log(stateID);
     }
 
     // Update is called once per frame

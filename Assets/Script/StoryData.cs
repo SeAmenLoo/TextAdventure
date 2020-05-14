@@ -25,7 +25,7 @@ public class StoryData : MonoBehaviour
         }
         else
         {
-            Debug.Log("not found");
+            //Debug.Log("not found");
             return null;
         }
     }
@@ -37,7 +37,7 @@ public class StoryData : MonoBehaviour
         }
         else
         {
-            Debug.Log("not found");
+            //Debug.Log("not found");
             return null;
         }
     }
@@ -64,7 +64,7 @@ public class StoryData : MonoBehaviour
         }
         else
         {
-            Debug.Log("not found");
+            //Debug.Log("not found");
             return null;
         }
     }
@@ -85,7 +85,7 @@ public class StoryData : MonoBehaviour
             }
         }
 
-        Debug.Log("not found"+num+" on "+stage);
+        //Debug.Log("not found"+num+" on "+stage);
         return null;
 
     }
@@ -97,7 +97,7 @@ public class StoryData : MonoBehaviour
         }
         else
         {
-            Debug.Log("not found");
+            //Debug.Log("not found");
             return null;
         }
     }

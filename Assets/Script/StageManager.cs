@@ -20,6 +20,7 @@ public class StageManager : MonoBehaviour
     {
         CheckPause();
         CheckMapVisable();
+        CheckExit();
     }
     private void OnDisable()
     {
@@ -92,7 +93,7 @@ public class StageManager : MonoBehaviour
         if (!string.IsNullOrEmpty(stageData.Video))
         {
            
-            Debug.Log(stageData.ID.ToString() +" Start");
+            //Debug.Log(stageData.ID.ToString() +" Start");
             if (stageData.Video.Contains(".mp4"))
             {
                 stage.ActVideo(true);
@@ -130,8 +131,8 @@ public class StageManager : MonoBehaviour
     {
         StageData stageData = storyData.GetStageDataByID(curStage);
 
-        Debug.Log(stageData.ID.ToString() +" end");
-        Debug.Log("last:"+lastStage);
+        //Debug.Log(stageData.ID.ToString() +" end");
+        //Debug.Log("last:"+lastStage);
         if (stageData.Select > 0)
         {
             //SelectData selectData = storyData.GetSelectDataByID(stageData.Select);
@@ -167,7 +168,7 @@ public class StageManager : MonoBehaviour
         if (stageData.Select > 0)
         {
             canPause = false;
-            Debug.Log("can select" + curStage);
+            //Debug.Log("can select" + curStage);
             SelectData selectData = storyData.GetSelectDataByID(stageData.Select);
             stage.SetSelect(selectData);
             //stage.ActAside(true);
@@ -191,7 +192,7 @@ public class StageManager : MonoBehaviour
     }
     IEnumerator WaitSelect(SelectData selectData)
     {
-        Debug.Log("Waiting");
+        //Debug.Log("Waiting");
         while (true){
             
             if (Input.anyKeyDown)
@@ -206,7 +207,7 @@ public class StageManager : MonoBehaviour
                         curStage = -selectData.items[i].Next;
                         stage.onMaskEnd = Select;
                         stage.SelectMask();
-                        Debug.Log("endWait");
+                        //Debug.Log("endWait");
                         yield break;
                     }
                 }
@@ -263,7 +264,7 @@ public class StageManager : MonoBehaviour
                 {
                     stage.ActInputF(true);
                     stage.ErrorPhone();
-                    Debug.Log("error phone");
+                    //Debug.Log("error phone");
                 }
                 else
                 {
@@ -290,7 +291,7 @@ public class StageManager : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.P)&&canPause)//todo暂停按键
         {
-            Debug.Log("pause");
+            //Debug.Log("pause");
             if (isPause)
             {
                 SetPause(false);
@@ -319,15 +320,20 @@ public class StageManager : MonoBehaviour
     void CheckMapVisable()
     {
         //KeyCode.Slash
-        if (Input.GetKeyDown(KeyCode.Alpha8) && canShowMap)//todo菜单按键
+        
+     
+        if (Input.GetKey(KeyCode.LeftControl))
         {
-            Debug.Log("showMap");
-            canShowMap = false;
-            stage.isMap = true;
-            stage.PauseVideo(!isMapShow);
-            stage.onMaskEnd = SetMapMask;
-            stage.SelectMask();
+            if (Input.GetKeyDown(KeyCode.Alpha8) && canShowMap)//todo菜单按键
+            {
+                //Debug.Log("showMap");
+                canShowMap = false;
+                stage.isMap = true;
+                stage.PauseVideo(!isMapShow);
+                stage.onMaskEnd = SetMapMask;
+                stage.SelectMask();
 
+            }
         }
     }
     void SetMapMask()
@@ -345,6 +351,17 @@ public class StageManager : MonoBehaviour
         isMapShow = !isMapShow;
         canShowMap = true;
         stage.isMap = false;
+    }
+    void CheckExit()
+    {
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            if(Input.GetKey(KeyCode.Alpha3)&&Input.GetKey(KeyCode.Alpha8))
+            {
+                //Debug.Log("exit");
+                Application.Quit();
+            }
+        }
     }
     
 }

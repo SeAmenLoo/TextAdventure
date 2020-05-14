@@ -40,11 +40,11 @@ public class FileReader : MonoBehaviour
         {
             string file_url = path ;    //根据路径打开csv文件
             sr = File.OpenText(file_url);
-            Debug.Log("File Find in " + file_url);
+            //Debug.Log("File Find in " + file_url);
         }
         catch
         {
-            Debug.Log("File cannot find ! ");
+            //Debug.Log("File cannot find ! ");
             return null;
         }
         string line;
@@ -63,7 +63,7 @@ public class FileReader : MonoBehaviour
         Dictionary<int, StageData> stageDataList = new Dictionary<int, StageData>();
         string path = Application.streamingAssetsPath + "/Config/Stage.csv";
         List<string> data = ReadCSV(path);
-        Debug.Log(data[0]);
+        //Debug.Log(data[0]);
         for (int i = 1; i < data.Count; i++)
         {
             string[] str = data[i].Split(',');
@@ -92,7 +92,7 @@ public class FileReader : MonoBehaviour
         Dictionary<int, SelectData> selectDataList = new Dictionary<int, SelectData>();
         string path = Application.streamingAssetsPath + "/Config/Select.csv";
         List<string> data = ReadCSV(path);
-        Debug.Log(data[0]);
+        //Debug.Log(data[0]);
         for (int i = 1; i < data.Count; i++)
         {
             string[] str = data[i].Split(',');
@@ -129,7 +129,7 @@ public class FileReader : MonoBehaviour
         Dictionary<int, PhoneData> phoneDataList = new Dictionary<int, PhoneData>();
         string path = Application.streamingAssetsPath + "/Config/Phone.csv";
         List<string> data = ReadCSV(path);
-        Debug.Log(data[0]);
+        //Debug.Log(data[0]);
         for (int i = 1; i < data.Count; i++)
         {
             string[] str = data[i].Split(',');
@@ -151,7 +151,7 @@ public class FileReader : MonoBehaviour
         Dictionary<int, StateData> stateDataList = new Dictionary<int, StateData>();
         string path = Application.streamingAssetsPath + "/Config/State.csv";
         List<string> data = ReadCSV(path);
-        Debug.Log(data[0]);
+        //Debug.Log(data[0]);
         for (int i = 1; i < data.Count; i++)
         {
             string[] str = data[i].Split(',');

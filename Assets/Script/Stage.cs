@@ -124,7 +124,7 @@ public class Stage : MonoBehaviour
         isPause = false;
         int i = 0;
         int frame = (int)video.frameCount - defFrame;
-        Debug.Log(video.url);
+        //Debug.Log(video.url);
         bool canselect = false;
         while (true){
 

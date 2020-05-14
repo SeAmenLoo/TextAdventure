@@ -42,7 +42,7 @@ public class Map : MonoBehaviour
     public void UpdateMapPosition(RectTransform rect)
     {
         float posx;
-        Debug.Log(MapRect.rect.width + "-" + Screen.width + "/2<" + rect.localPosition.x);
+        //Debug.Log(MapRect.rect.width + "-" + Screen.width + "/2<" + rect.localPosition.x);
         if((MapRect.rect.width-Screen.width) / 2< Mathf.Abs(rect.localPosition.x))
         {
             posx=Mathf.Sign(rect.localPosition.x) * (MapRect.rect.width - Screen.width) / 2;
