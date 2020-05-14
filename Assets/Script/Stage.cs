@@ -313,6 +313,7 @@ public class Stage : MonoBehaviour
     {
         StartCoroutine(SelectEnd());
     }
+    public bool isMap;
     IEnumerator SelectEnd()
     {
         int i = 0;
@@ -331,7 +332,7 @@ public class Stage : MonoBehaviour
             if (i > maskFrame) {
                 //mask.color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
                 flag = true;
-                if (!video.isPaused)
+                if (!isMap)
                 {
                     ClearVideo();
                 }

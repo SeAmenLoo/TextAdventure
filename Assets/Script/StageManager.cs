@@ -323,6 +323,7 @@ public class StageManager : MonoBehaviour
         {
             Debug.Log("showMap");
             canShowMap = false;
+            stage.isMap = true;
             stage.PauseVideo(!isMapShow);
             stage.onMaskEnd = SetMapMask;
             stage.SelectMask();
@@ -343,6 +344,7 @@ public class StageManager : MonoBehaviour
         }
         isMapShow = !isMapShow;
         canShowMap = true;
+        stage.isMap = false;
     }
     
 }
