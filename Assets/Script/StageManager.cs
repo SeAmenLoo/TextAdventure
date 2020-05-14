@@ -322,7 +322,7 @@ public class StageManager : MonoBehaviour
         //KeyCode.Slash
         
      
-        if (Input.GetKey(KeyCode.LeftControl))
+        if (Input.GetKey(KeyCode.LeftShift))
         {
             if (Input.GetKeyDown(KeyCode.Alpha8) && canShowMap)//todo菜单按键
             {
