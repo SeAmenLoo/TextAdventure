@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 public class Stage : MonoBehaviour
 {
     
@@ -45,6 +46,7 @@ public class Stage : MonoBehaviour
     void Start()
     {
         inputField.onValueChanged.AddListener(Changed_Value);
+
     }
 
     // Update is called once per frame
@@ -166,13 +168,44 @@ public class Stage : MonoBehaviour
     public void ActAside(bool act){
         objAside.SetActive(act);
     }
-#endregion
-#region 配音 视频自带配音，此处仅为背景音乐
-    public void SetSound(string audioID){
-        AudioClip clip = Resources.Load<AudioClip>(Application.streamingAssetsPath + '/' + audioID);
+    #endregion
 
-        sound.clip= clip;
-        sound.playOnAwake=false;
+    #region 配音 视频自带配音，此处仅为背景音乐
+    public AudioClip[] clips;
+    string urlMp3;
+    IEnumerator LoadMp3()
+    {
+
+
+        using(var uwr = UnityWebRequestMultimedia.GetAudioClip(urlMp3, AudioType.OGGVORBIS))
+{
+            yield return uwr.SendWebRequest();
+            
+            AudioClip clip = DownloadHandlerAudioClip.GetContent(uwr);
+            // use audio clip
+            sound.clip = clip;
+            sound.Play();
+        }
+
+    }
+    public void SetSound(string audioID){
+        //urlMp3 = "file://" + Application.streamingAssetsPath + audioID;
+        //AudioClip cl = Resources.Load<AudioClip>(urlMp3);
+        //sound.clip = cl;
+        //PlaySound();
+
+        //StartCoroutine(LoadMp3());
+        //DownloadHandlerAudioClip a = new DownloadHandlerAudioClip(urlMp3, AudioType.MPEG);
+
+        //sound.clip = a.audioClip;
+        //sound.playOnAwake = false;
+        foreach(AudioClip clip in clips)
+        {
+            if(clip.name== audioID)
+            {
+                sound.clip = clip;
+            }
+        }
     }
     public void PlaySound(bool play=true){
         if(play){

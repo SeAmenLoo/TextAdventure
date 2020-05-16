@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Xml;
 using System.IO;
 
-public class FileReader : MonoBehaviour
+public class FileReader 
 {
     static FileReader fileReader =null;
 
@@ -21,17 +21,7 @@ public class FileReader : MonoBehaviour
 
         
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public List<string>  ReadCSV(string path)
     {
         List<string> data = new List<string>();
