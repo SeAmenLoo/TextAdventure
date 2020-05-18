@@ -40,7 +40,7 @@ public class Stage : MonoBehaviour
     public int defFrame=150;
     public GameObject objPause;
 
-    public int maskFrame ;
+   
     public Image mask;
     // Start is called before the first frame update
     void Start()
@@ -348,14 +348,33 @@ public class Stage : MonoBehaviour
     }
     [HideInInspector]
     public bool isMap;
-    public int delayFrame=10;
+
+    public int MapMask;
+    public int MapDelay;
+    
+    public int StageMask;
+    public int StageDelay;
+    
+    int delayFrame=10;
+    int maskFrame=30;
     IEnumerator SelectEnd()
     {
         int i = 0;
         bool flag=false;
         bool dark = true ;
+        if (isMap)
+        {
+            delayFrame = MapDelay;
+            maskFrame = MapMask;
+        }
+        else
+        {
+            delayFrame = StageDelay;
+            maskFrame = StageMask;
+        }
         while (true)
         {
+            
             if (!flag)
             {
                 i++;

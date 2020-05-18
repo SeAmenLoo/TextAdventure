@@ -8,10 +8,11 @@ public class StageManager : MonoBehaviour
     public StoryData storyData;
     int curStage;
     int lastStage;
+    public int FPS;
     // Start is called before the first frame update
     void Start()
     {
-        Application.targetFrameRate = 30;
+        Application.targetFrameRate = FPS;
         storyData.LoadData();
         StartGame(1);
     }
@@ -19,6 +20,7 @@ public class StageManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+      
         CheckPause();
         CheckMapVisable();
         CheckExit();
