@@ -354,12 +354,12 @@ public class StageManager : MonoBehaviour
         }
         else
         {
-            
             stageMap.SetMapShow(true);
         }
         isMapShow = !isMapShow;
         canShowMap = true;
-        
+        stage.isMap = false;
+
     }
     void CheckExit()
     {

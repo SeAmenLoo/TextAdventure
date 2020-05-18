@@ -382,7 +382,7 @@ public class Stage : MonoBehaviour
             }
             else if (i < 0 && flag)
             {
-                isMap = false;
+                
                 yield break;
             }
             yield return null;
