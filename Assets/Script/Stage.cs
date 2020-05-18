@@ -346,11 +346,14 @@ public class Stage : MonoBehaviour
     {
         StartCoroutine(SelectEnd());
     }
+    [HideInInspector]
     public bool isMap;
+    public int delayFrame=10;
     IEnumerator SelectEnd()
     {
         int i = 0;
         bool flag=false;
+        bool dark = true ;
         while (true)
         {
             if (!flag)
@@ -361,10 +364,10 @@ public class Stage : MonoBehaviour
             {
                 i--;
             }
-            mask.color = new Color(0.0f, 0.0f, 0.0f, (float)i*2 / maskFrame);
-            if (i > maskFrame) {
+            mask.color = new Color(0.0f, 0.0f, 0.0f, (float)i / maskFrame);
+            if (i > maskFrame&&dark) {
                 //mask.color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
-                flag = true;
+                dark = false;
                 if (!isMap)
                 {
                     ClearVideo();
@@ -373,8 +376,13 @@ public class Stage : MonoBehaviour
                 onMaskEnd();
                
             }
+            if (i > maskFrame + delayFrame)
+            {
+                flag = true;
+            }
             else if (i < 0 && flag)
             {
+                isMap = false;
                 yield break;
             }
             yield return null;

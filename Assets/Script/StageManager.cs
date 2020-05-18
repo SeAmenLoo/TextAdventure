@@ -11,6 +11,7 @@ public class StageManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Application.targetFrameRate = 30;
         storyData.LoadData();
         StartGame(1);
     }
@@ -41,6 +42,11 @@ public class StageManager : MonoBehaviour
     }
     void UpdataStage(StageData stageData)
     {
+        if (stageData== null)
+        {
+            Debug.Log("quit");
+            Application.Quit();
+        }
         if (stageData.PreState != null && stageData.PreState.Count >= 0)
         {
             for (int i = 0; i < stageData.PreState.Count; i++)
@@ -113,12 +119,14 @@ public class StageManager : MonoBehaviour
         }
         if (!string.IsNullOrEmpty(stageData.Audio))
         {
+            //Debug.Log(stageData.Audio);
             if (stageData.Audio == "clear")
             {
                 stage.PlaySound(false);
             }
             else
             {
+                
                 stage.SetSound(stageData.Audio);
                 stage.PlaySound();
             }
@@ -342,6 +350,7 @@ public class StageManager : MonoBehaviour
         {
             
             stageMap.SetMapShow(false);
+           
         }
         else
         {
@@ -350,7 +359,7 @@ public class StageManager : MonoBehaviour
         }
         isMapShow = !isMapShow;
         canShowMap = true;
-        stage.isMap = false;
+        
     }
     void CheckExit()
     {
